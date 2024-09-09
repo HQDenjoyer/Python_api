@@ -1,0 +1,44 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ news.title }}</title>
+    <link rel="stylesheet" href="{% static 'css/news_detail.css' %}">
+</head>
+<body>
+    <div class="news-detail-container">
+        <img src="{{ news.image }}" alt="News Image">
+        <h1>{{ news.title }}</h1>
+        <p class="news-date">{{ news.date }}</p>
+        <p>{{ news.summary }}</p>
+        <p>{{ news.view_count }} просмотров</p>
+        <div class="like-dislike-container">
+            <button onclick="sendReaction('{{ news.title | escapejs }}', 'like')">👍 Лайк (<span id="like-count">{{ news.like_count }}</span>)</button>
+            <button onclick="sendReaction('{{ news.title | escapejs }}', 'dislike')">👎 Дизлайк (<span id="dislike-count">{{ news.dislike_count }}</span>)</button>
+        </div>
+    </div>
+    <script>
+        function sendReaction(newsTitle, reaction) {
+            fetch(`/api/reaction/${encodeURIComponent(newsTitle)}/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reaction: reaction })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    document.getElementById('like-count').textContent = data.like_count;
+                    document.getElementById('dislike-count').textContent = data.dislike_count;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

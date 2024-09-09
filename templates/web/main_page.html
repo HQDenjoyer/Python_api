@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{% static 'css/main_page.css' %}">
+    <title>Новости ТИУ</title>
+</head>
+<body>
+    <h1>Новости ТИУ</h1>
+    <div class="sort-container">
+        <button onclick="window.location.href='?sort_by=none'">Без сортировки</button>
+        <button onclick="window.location.href='?sort_by=views'">Сортировка по просмотрам</button>
+        <button onclick="window.location.href='?sort_by=likes'">Сортировка по лайкам</button>
+        <button onclick="window.location.href='?sort_by=dislikes'">Сортировка по дизлайкам</button>
+    </div>
+    <div class="news-container">
+        {% if news_list %}
+            {% for news in news_list %}
+            <div class="news-item">
+                <img src="{{ news.image }}" alt="{{ news.title }}">
+                <div class="news-item-content">
+                    <div class="news-meta">
+                        <span>{{ news.view_count }} просмотров</span>
+                        <span>{{ news.date }}</span>
+                    </div>
+                    <h2>{{ news.title }}</h2>
+                    <a href="/newsdetail/{{ news.title | urlencode }}">Читать далее</a> <span>Лайки: {{ news.like_count }} | Дизлайки: {{ news.dislike_count }}</span>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>Новостей нет</p>
+        {% endif %}
+    </div>
+    <div class="pagination">
+        {% if previous_page %}
+        <button onclick="window.location.href='?page={{ previous_page }}'">Previous</button>
+        {% else %}
+        <button disabled>Previous</button>
+        {% endif %}
+        {% if next_page %}
+        <button onclick="window.location.href='?page={{ next_page }}'">Next</button>
+        {% else %}
+        <button disabled>Next</button>
+        {% endif %}
+    </div>
+</body>
+</html>
